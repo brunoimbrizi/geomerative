@@ -86,6 +86,7 @@ public class RCommand extends RGeomElem
 
   /* Parameters for UNIFORMSTEP */
   static int segmentSteps = 0;
+  static float segmentRatio = 0.25F;
   static boolean segmentLines = false;
 
   int oldSegmentType = UNIFORMLENGTH;
@@ -370,6 +371,18 @@ public class RCommand extends RGeomElem
     }
   }
 
+
+  /**
+   * Ratio of the steps to be created for each segment. Automatically sets setSegmentStep(0);
+   * @eexample setSegmentStepRatio
+   * @param segmentRtio  float between 0.0 and 1.0. If 0.0, only end points are returned. If 1.0, return points for every pixel. Default is 0.25.  
+   * */
+  public static void setSegmentStepRatio(float segmentRtio){
+      setSegmentStep(0);
+	  if (segmentRtio <= 0.0F) segmentRatio = 0.0F;
+	  else if (segmentRtio >= 1.0F) segmentRatio = 1.0F;
+	  else segmentRatio = segmentRtio;
+  }
 
   protected void saveSegmentatorContext(){
     oldSegmentType = RCommand.segmentType;
@@ -1186,9 +1199,9 @@ public class RCommand extends RGeomElem
       float dy = endPoint.y - startPoint.y;
 
       float len = (float)Math.sqrt(dx * dx + dy * dy);
-      steps = (int)(len * 0.25);
-
-      if(steps < 4) steps = 4;
+      steps = (int)(len * segmentRatio);
+      
+      //if(steps < 4) steps = 4;
     }
 
     float dt = 1F/steps;
@@ -1227,12 +1240,9 @@ public class RCommand extends RGeomElem
         (float)Math.sqrt(dx2 * dx2 + dy2 * dy2) +
         (float)Math.sqrt(dx3 * dx3 + dy3 * dy3);
 
-      steps = (int)(len * 0.25);
+      steps = (int)(len * segmentRatio);
 
-      if(steps < 4)
-        {
-          steps = 4;
-        }
+      //if(steps < 4) steps = 4;
     }
 
     float dt = 1F/steps;
@@ -1282,9 +1292,9 @@ public class RCommand extends RGeomElem
       float dy2 = endPoint.y - controlPoints[0].y;
 
       float len = (float)Math.sqrt(dx1 * dx1 + dy1 * dy1) + (float)Math.sqrt(dx2 * dx2 + dy2 * dy2);
-      steps = (int)(len * 0.25);
+      steps = (int)(len * segmentRatio);
 
-      if(steps < 4) steps = 4;
+      //if(steps < 4) steps = 4;
     }
 
     float dt = 1F/steps;
